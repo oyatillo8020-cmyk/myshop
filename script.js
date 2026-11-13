@@ -2,9 +2,27 @@ const $=i=>document.getElementById(i);
 const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const money=n=>Number(n).toLocaleString("ru-RU")+" so‘m";
 let S={products:[],orders:[],cfg:{}};
-try{const r=localStorage.getItem("shop_v1");if(r)S=Object.assign(S,JSON.parse(r))}catch(e){}
-S.cfg=Object.assign({name:"VELVET",tg:"",phone:"",pass:"1234"},S.cfg);
-function save(){try{localStorage.setItem("shop_v1",JSON.stringify(S))}catch(e){toast("Xotira to‘ldi. Rasmlarni kamaytiring yoki eskilarini o‘chiring.")}}
+
+// Firebase'dan ma'lumotlarni o'qib olish (agar mavjud bo'lsa)
+try{
+  database().ref('shop_v1').once('value').then(snapshot => {
+    const r = snapshot.val();
+    if(r) S = Object.assign(S, r);
+    S.cfg = Object.assign({name:"VELVET",tg:"",phone:"",pass:"1234"}, S.cfg);
+    renderShop();
+  });
+}catch(e){
+  S.cfg = Object.assign({name:"VELVET",tg:"",phone:"",pass:"1234"}, S.cfg);
+}
+
+// Saqlash funksiyasi localStorage o'rniga Firebase Realtime Database'ga saqlaydi
+function save(){
+  try{
+    database().ref('shop_v1').set(S);
+  }catch(e){
+    toast("Saqlashda xatolik yuz berdi.");
+  }
+}
 
 let tt;function toast(m){const t=$("toast");t.textContent=m;t.classList.add("on");clearTimeout(tt);tt=setTimeout(()=>t.classList.remove("on"),2600)}
 let cart=[],cat="Hammasi",qry="",sortBy="new",authed=false,tab="p",editId=null,imgs=[],cur=null,curSize="",curImg=0;
@@ -84,7 +102,7 @@ function drawAdmin(){
   h+=S.orders.length?S.orders.map(o=>`<div class="row" style="align-items:flex-start"><div class="g"><b>${esc(o.n)}</b> · ${esc(o.ph)}<div class="mut">${esc(o.date)} · ${esc(o.ad)}</div>${o.items.map(i=>`<div>${esc(i.name)}${i.size?" ("+esc(i.size)+")":""} × ${i.q}</div>`).join("")}<b>${money(o.total)}</b></div><div><button class="btn s sm" data-st="${o.id}">${esc(o.st)}</button><br><br><button class="btn s sm" data-od="${o.id}">O‘chirish</button></div></div>`).join(""):`<p class="mut">Buyurtmalar hali yo‘q.</p>`}
  else{
   h+=`<div class="f"><div class="mut">Do‘kon nomi</div><input id="cn1" value="${esc(S.cfg.name)}"><div class="mut">Telegram username (@siz) — buyurtma shu yerga tushadi</div><input id="cn2" placeholder="masalan: mening_dokonim" value="${esc(S.cfg.tg)}"><div class="mut">Telefon</div><input id="cn3" value="${esc(S.cfg.phone)}"><div class="mut">Admin paroli</div><input id="cn4" value="${esc(S.cfg.pass)}"></div><button class="btn" id="savec">Saqlash</button>
-  <h3>Zaxira nusxa</h3><div class="mut">Barcha ma‘lumot shu brauzerda saqlanadi. Zaxira olish uchun "Olish", tiklash uchun matnni qo‘yib "Tiklash" bosing.</div><div class="f"><textarea id="bk" rows="4"></textarea></div><button class="btn s sm" id="bkx">Olish</button> <button class="btn s sm" id="bki">Tiklash</button>`}
+  <h3>Zaxira nusxa</h3><div class="mut">Barcha ma‘lumot Firebase bazasida saqlanadi. Zaxira olish uchun "Olish", tiklash uchun matnni qo‘yib "Tiklash" bosing.</div><div class="f"><textarea id="bk" rows="4"></textarea></div><button class="btn s sm" id="bkx">Olish</button> <button class="btn s sm" id="bki">Tiklash</button>`}
  B.innerHTML=h;
 }
 $("adBody").onclick=e=>{
@@ -97,7 +115,7 @@ $("adBody").onclick=e=>{
   if(!name||!price){toast("Nom va narxni kiriting");return}
   const o={id:editId||Date.now(),name,price,old:+$("fo").value||0,cat:$("fc").value.trim(),sizes:$("fs").value.split(/[,\s]+/).map(s=>s.trim()).filter(Boolean),desc:$("fd").value.trim(),imgs:imgs.slice()};
   if(editId)S.products=S.products.map(p=>p.id===editId?o:p);else S.products.push(o);
-  (    database().ref('products').set(S.products));editId=null;imgs=[];renderShop();drawAdmin();toast("Saqlandi ✅")}
+  save();editId=null;imgs=[];renderShop();drawAdmin();toast("Saqlandi ✅")}
  else if(t.id==="canc"){editId=null;imgs=[];drawAdmin()}
  else if(d.ed){editId=+d.ed;imgs=(S.products.find(p=>p.id===editId).imgs||[]).slice();drawAdmin();$("adBody").parentElement.scrollTo(0,0)}
  else if(d.del){S.products=S.products.filter(p=>p.id!==+d.del);save();renderShop();drawAdmin()}
@@ -117,4 +135,3 @@ function restore(){drawAdmin();for(const k in kept)$(k).value=kept[k]}
 /* ---------- Umumiy ---------- */
 document.addEventListener("click",e=>{if(e.target.closest("[data-close]")||e.target.classList.contains("ov")){document.querySelectorAll(".ov.on").forEach(o=>o.classList.remove("on"));$("dr").classList.remove("on")}});
 addEventListener("keydown",e=>{if(e.key==="Escape"){document.querySelectorAll(".ov.on").forEach(o=>o.classList.remove("on"));$("dr").classList.remove("on")}});
-renderShop();
