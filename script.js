@@ -5,7 +5,6 @@ let S={products:[],orders:[],cfg:{}};
 try{const r=localStorage.getItem("shop_v1");if(r)S=Object.assign(S,JSON.parse(r))}catch(e){}
 S.cfg=Object.assign({name:"VELVET",tg:"",phone:"",pass:"1234"},S.cfg);
 function save(){try{localStorage.setItem("shop_v1",JSON.stringify(S))}catch(e){toast("Xotira to‘ldi. Rasmlarni kamaytiring yoki eskilarini o‘chiring.")}}
-
 let tt;function toast(m){const t=$("toast");t.textContent=m;t.classList.add("on");clearTimeout(tt);tt=setTimeout(()=>t.classList.remove("on"),2600)}
 let cart=[],cat="Hammasi",qry="",sortBy="new",authed=false,tab="p",editId=null,imgs=[],cur=null,curSize="",curImg=0;
 
@@ -97,7 +96,7 @@ $("adBody").onclick=e=>{
   if(!name||!price){toast("Nom va narxni kiriting");return}
   const o={id:editId||Date.now(),name,price,old:+$("fo").value||0,cat:$("fc").value.trim(),sizes:$("fs").value.split(/[,\s]+/).map(s=>s.trim()).filter(Boolean),desc:$("fd").value.trim(),imgs:imgs.slice()};
   if(editId)S.products=S.products.map(p=>p.id===editId?o:p);else S.products.push(o);
-  (    database().ref('products').set(S.products));editId=null;imgs=[];renderShop();drawAdmin();toast("Saqlandi ✅")}
+  save();editId=null;imgs=[];renderShop();drawAdmin();toast("Saqlandi ✅")}
  else if(t.id==="canc"){editId=null;imgs=[];drawAdmin()}
  else if(d.ed){editId=+d.ed;imgs=(S.products.find(p=>p.id===editId).imgs||[]).slice();drawAdmin();$("adBody").parentElement.scrollTo(0,0)}
  else if(d.del){S.products=S.products.filter(p=>p.id!==+d.del);save();renderShop();drawAdmin()}
