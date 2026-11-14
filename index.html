@@ -1,24 +1,810 @@
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Online Shop</title>
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vinsent van Gog — Yulduzli Tun va Hayoti</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-deep: #0a1128;
+            --bg-card: rgba(15, 23, 42, 0.85);
+            --accent-gold: #f4c430;
+            --accent-yellow: #ffdf00;
+            --accent-blue: #3b82f6;
+            --text-main: #f8fafc;
+            --text-muted: #cbd5e1;
+            --border-glow: rgba(244, 196, 48, 0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Starry Background Canvas */
+        #starryCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            background: radial-gradient(circle at 50% 30%, #1e293b 0%, #0a1128 70%);
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 8%;
+            background: rgba(10, 17, 40, 0.9);
+            backdrop-filter: blur(12px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(244, 196, 48, 0.2);
+        }
+
+        .logo {
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-gold);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-gold);
+            text-shadow: 0 0 10px rgba(244, 196, 48, 0.6);
+        }
+
+        /* Hero Section */
+        header.hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 0 20px;
+            position: relative;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            background: rgba(10, 17, 40, 0.75);
+            padding: 50px;
+            border-radius: 20px;
+            border: 1px solid var(--border-glow);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            animation: fadeIn 1.5s ease-out;
+        }
+
+        .hero h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 3.5rem;
+            color: var(--accent-gold);
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            margin-bottom: 30px;
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 14px 35px;
+            background: linear-gradient(135deg, #f4c430, #d97706);
+            color: #000;
+            font-weight: 700;
+            text-decoration: none;
+            border-radius: 30px;
+            transition: 0.3s;
+            box-shadow: 0 0 20px rgba(244, 196, 48, 0.4);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 30px rgba(244, 196, 48, 0.8);
+        }
+
+        /* Sections General */
+        section {
+            padding: 100px 8%;
+            position: relative;
+        }
+
+        .section-title {
+            text-align: center;
+            font-family: 'Cinzel', serif;
+            font-size: 2.8rem;
+            color: var(--accent-gold);
+            margin-bottom: 60px;
+            text-shadow: 0 0 15px rgba(244, 196, 48, 0.3);
+        }
+
+        /* Biography Timeline */
+        .timeline {
+            position: relative;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .timeline::after {
+            content: '';
+            position: absolute;
+            width: 4px;
+            background: var(--accent-gold);
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            margin-left: -2px;
+            box-shadow: 0 0 10px var(--accent-gold);
+        }
+
+        .timeline-item {
+            padding: 10px 40px;
+            position: relative;
+            background: inherit;
+            width: 50%;
+        }
+
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            right: -10px;
+            background: var(--bg-deep);
+            border: 4px solid var(--accent-gold);
+            top: 20px;
+            border-radius: 50%;
+            z-index: 1;
+            box-shadow: 0 0 10px var(--accent-gold);
+        }
+
+        .left { left: 0; }
+        .right { left: 50%; }
+
+        .right::after { left: -10px; }
+
+        .timeline-content {
+            padding: 25px 30px;
+            background: var(--bg-card);
+            position: relative;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        .timeline-content img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(244, 196, 48, 0.3);
+        }
+
+        .timeline-content h3 {
+            color: var(--accent-gold);
+            margin-bottom: 10px;
+            font-family: 'Cinzel', serif;
+        }
+
+        .timeline-content span {
+            font-size: 0.9rem;
+            color: var(--accent-yellow);
+            font-weight: 600;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        /* Gallery Grid */
+        .gallery-filters {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(244, 196, 48, 0.4);
+            color: var(--text-main);
+            padding: 10px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: 500;
+        }
+
+        .filter-btn.active, .filter-btn:hover {
+            background: var(--accent-gold);
+            color: #000;
+            box-shadow: 0 0 15px rgba(244, 196, 48, 0.6);
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .gallery-card {
+            background: var(--bg-card);
+            border-radius: 15px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: 0.4s;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+        }
+
+        .gallery-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--accent-gold);
+            box-shadow: 0 15px 35px rgba(244, 196, 48, 0.3);
+        }
+
+        .gallery-card img {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+            transition: 0.5s;
+        }
+
+        .gallery-card:hover img {
+            transform: scale(1.05);
+        }
+
+        .gallery-info {
+            padding: 20px;
+        }
+
+        .gallery-info h4 {
+            font-family: 'Cinzel', serif;
+            color: var(--accent-gold);
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+
+        .gallery-info p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: #0f172a;
+            max-width: 800px;
+            width: 100%;
+            border-radius: 20px;
+            border: 1px solid var(--accent-gold);
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.8);
+            position: relative;
+            animation: scaleUp 0.3s ease;
+        }
+
+        .modal-img-container {
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-img-container img {
+            max-width: 100%;
+            max-height: 450px;
+            object-fit: contain;
+            border-radius: 5px;
+        }
+
+        .modal-text {
+            padding: 35px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .modal-text h3 {
+            font-family: 'Cinzel', serif;
+            color: var(--accent-gold);
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        .modal-text .meta {
+            color: var(--accent-yellow);
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .modal-text p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: var(--text-main);
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: 0.3s;
+            z-index: 10;
+        }
+
+        .close-modal:hover {
+            color: var(--accent-gold);
+        }
+
+        /* Interactive Studio */
+        .studio-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--bg-card);
+            border-radius: 20px;
+            border: 1px solid var(--border-glow);
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+        }
+
+        #paintCanvas {
+            background: #050b1a;
+            border-radius: 12px;
+            cursor: crosshair;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+            border: 1px solid rgba(244, 196, 48, 0.3);
+            margin: 20px 0;
+            max-width: 100%;
+        }
+
+        .studio-tools {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .color-picker {
+            display: flex;
+            gap: 10px;
+        }
+
+        .color-dot {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: 0.3s;
+        }
+
+        .color-dot.active {
+            border-color: #fff;
+            transform: scale(1.15);
+            box-shadow: 0 0 10px currentColor;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px;
+            background: rgba(5, 11, 26, 0.95);
+            border-top: 1px solid rgba(244, 196, 48, 0.2);
+            color: var(--text-muted);
+        }
+
+        footer p {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            color: var(--accent-gold);
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes scaleUp {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.3rem; }
+            .timeline::after { left: 31px; }
+            .timeline-item { width: 100%; padding-left: 70px; padding-right: 25px; }
+            .timeline-item.right { left: 0; }
+            .timeline-item.right::after, .timeline-item.left::after { left: 21px; }
+            .modal-content { grid-template-columns: 1fr; }
+            .nav-links { display: none; }
+        }
+    </style>
 </head>
 <body>
-<header><div class="logo" id="logo"></div><div class="hr"><button class="ib" id="adminBtn">Admin</button><button class="ib" id="cartBtn">Savat<b id="cc">0</b></button></div></header>
-<section class="hero"><small>NEW COLLECTION &nbsp;|&nbsp; PREMIUM STREETWEAR</small><h1></h1></section>
-<div class="bar"><input id="search" placeholder="Qidirish..."><select id="sort"><option value="new">News</option><option value="lo">Chipper</option><option value="hi">expensive</option></select></div>
-<div class="chips" id="chips"></div>
-<div class="grid" id="grid"></div>
-<footer id="foot"></footer>
 
-<div class="ov" id="pmOv"><div class="box"><button class="x" data-close>×</button><div id="pmBody"></div></div></div>
-<div class="dr" id="dr"><button class="x" data-close>×</button><h2 style="margin-top:0">Savat</h2><div id="drBody"></div></div>
-<div class="ov" id="adOv"><div class="box"><button class="x" data-close>×</button><div id="adBody"></div></div></div>
-<div class="toast" id="toast"></div>
+    <!-- Jonli Yulduzli Tun Foni -->
+    <canvas id="starryCanvas"></canvas>
 
-<script src="script.js"></script>
+    <!-- Navigatsiya -->
+    <nav>
+        <div class="logo">
+            <i class="fa-solid fa-star"></i> Van Gogh
+        </div>
+        <ul class="nav-links">
+            <li><a href="#about">Hayoti</a></li>
+            <li><a href="#timeline">Xronologiya</a></li>
+            <li><a href="#gallery">Galereya</a></li>
+            <li><a href="#studio">Studiyo</a></li>
+        </ul>
+    </nav>
+
+    <!-- Asosiy Qism (Hero) -->
+    <header class="hero">
+        <div class="hero-content">
+            <h1>Vinsent van Gog</h1>
+            <p>"Men o'z rasmlarimga yuragim va jonimni tikdim, aqlimdan esa asar davomida ayrildim."</p>
+            <a href="#gallery" class="btn">Kartinalarni Ko'rish</a>
+        </div>
+    </header>
+
+    <!-- Hayot Yo'li / Xronologiya -->
+    <section id="timeline">
+        <h2 class="section-title">Hayot Yo'li va Ijod Davrlari</h2>
+        <div class="timeline">
+            <div class="timeline-item left">
+                <div class="timeline-content">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Vincent_van_Gogh_-_Self-Portrait_-_Google_Art_Project_%28454045%29.jpg/640px-Vincent_van_Gogh_-_Self-Portrait_-_Google_Art_Project_%28454045%29.jpg" alt="Avtoportret">
+                    <span>1853 – 1880</span>
+                    <h3>Bolalik va Boshlanish</h3>
+                    <p>Gollandiyaning Zundert shahrida ruhoniy oilasida tug'ilgan. Dastlab san'at asarlari sotuvchisi va missioner bo'lib ishlagan.</p>
+                </div>
+            </div>
+            <div class="timeline-item right">
+                <div class="timeline-content">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Vincent_van_Gogh_-_Sunflowers_-_VGM_F458.jpg/640px-Vincent_van_Gogh_-_Sunflowers_-_VGM_F458.jpg" alt="Kungaboqarlar">
+                    <span>1886 – 1888</span>
+                    <h3>Parij va Ranglar Inqilobi</h3>
+                    <p>Parijda impressionistlar bilan tanishdi. Yorqin ranglar palitrasini o'zlashtirib, o'zining mashhur "Kungaboqarlar" turkumini yaratdi.</p>
+                </div>
+            </div>
+            <div class="timeline-item left">
+                <div class="timeline-content">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/640px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg" alt="Yulduzli Tun">
+                    <span>1889 – 1890</span>
+                    <h3>Sen-Remi va "Yulduzli Tun"</h3>
+                    <p>Sen-Remidagi shifoxonada davolanayotgan paytda insoniyat tarixidagi eng buyuk durdona — "Yulduzli tun" asarini yaratdi.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Galereya -->
+    <section id="gallery">
+        <h2 class="section-title">Asar va Durdonalar</h2>
+        <div class="gallery-filters">
+            <button class="filter-btn active" data-filter="all">Barchasi</button>
+            <button class="filter-btn" data-filter="night">Tungi Manzaralar</button>
+            <button class="filter-btn" data-filter="nature">Tabiat va Gullar</button>
+            <button class="filter-btn" data-filter="portraits">Portretlar</button>
+        </div>
+
+        <div class="gallery-grid" id="galleryGrid">
+            <!-- Kartina 1 -->
+            <div class="gallery-card" data-category="night" data-title="Yulduzli Tun" data-year="1889" data-museum="Zamonaviy San'at Muzeyi, Nyu-York" data-desc="Sen-Remi ruhiy shifoxonasi derazasidan ko'rinib turgan tong oldi manzarasi. Rassomning ichki hissiy olami va girdobli osmon oqimlari ifodalangan." data-img="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/800px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/640px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg" alt="Yulduzli Tun">
+                <div class="gallery-info">
+                    <h4>Yulduzli Tun (1889)</h4>
+                    <p>Zamonaviy San'at Muzeyi, Nyu-York</p>
+                </div>
+            </div>
+            <!-- Kartina 2 -->
+            <div class="gallery-card" data-category="nature" data-title="Kungaboqarlar" data-year="1888" data-museum="Van Gog Muzeyi, Amsterdam" data-desc="Arl shahrida do'sti Pol Gogen kelishi sharafiga bezatilgan xona uchun chizilgan mashhur natyurmort." data-img="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Vincent_van_Gogh_-_Sunflowers_-_VGM_F458.jpg/800px-Vincent_van_Gogh_-_Sunflowers_-_VGM_F458.jpg">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Vincent_van_Gogh_-_Sunflowers_-_VGM_F458.jpg/640px-Vincent_van_Gogh_-_Sunflowers_-_VGM_F458.jpg" alt="Kungaboqarlar">
+                <div class="gallery-info">
+                    <h4>Kungaboqarlar (1888)</h4>
+                    <p>Van Gog Muzeyi, Amsterdam</p>
+                </div>
+            </div>
+            <!-- Kartina 3 -->
+            <div class="gallery-card" data-category="night" data-title="Kafe Terrasidagi Tun" data-year="1888" data-museum="Kröller-Müller Muzeyi, Otterlo" data-desc="Arl shahridagi Forum maydonida joylashgan kafe va yulduzli osmonning sariq-ko'k kontrast uyg'unligi." data-img="https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Van_Gogh_-_Caféterras_bij_nacht_%28omgeving_Forum_Amstelveen%29.jpg/800px-Van_Gogh_-_Caféterras_bij_nacht_%28omgeving_Forum_Amstelveen%29.jpg">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Van_Gogh_-_Caféterras_bij_nacht_%28omgeving_Forum_Amstelveen%29.jpg/640px-Van_Gogh_-_Caféterras_bij_nacht_%28omgeving_Forum_Amstelveen%29.jpg" alt="Kafe Terrasidagi Tun">
+                <div class="gallery-info">
+                    <h4>Kafe Terrasidagi Tun (1888)</h4>
+                    <p>Kröller-Müller Muzeyi</p>
+                </div>
+            </div>
+            <!-- Kartina 4 -->
+            <div class="gallery-card" data-category="portraits" data-title="Avtoportret" data-year="1889" data-museum="Orse Muzeyi, Parij" data-desc="Rassomning o'ziga xos nigohi va ko'k tonlardagi chuqur psixologik holatini aks ettiruvchi portreti." data-img="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Vincent_van_Gogh_-_Self-Portrait_-_Google_Art_Project_%28454045%29.jpg/800px-Vincent_van_Gogh_-_Self-Portrait_-_Google_Art_Project_%28454045%29.jpg">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Vincent_van_Gogh_-_Self-Portrait_-_Google_Art_Project_%28454045%29.jpg/640px-Vincent_van_Gogh_-_Self-Portrait_-_Google_Art_Project_%28454045%29.jpg" alt="Avtoportret">
+                <div class="gallery-info">
+                    <h4>Avtoportret (1889)</h4>
+                    <p>Orse Muzeyi, Parij</p>
+                </div>
+            </div>
+            <!-- Kartina 5 -->
+            <div class="gallery-card" data-category="nature" data-title="Bodom Gullari" data-year="1890" data-museum="Van Gog Muzeyi, Amsterdam" data-desc="Yangi tug'ilgan jiyanining sharafiga bahor elchisi bo'lgan oq bodom gullarini tasvirlagan umidbaxsh asar." data-img="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Vincent_van_Gogh_-_Almond_blossom_-_Google_Art_Project.jpg/800px-Vincent_van_Gogh_-_Almond_blossom_-_Google_Art_Project.jpg">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Vincent_van_Gogh_-_Almond_blossom_-_Google_Art_Project.jpg/640px-Vincent_van_Gogh_-_Almond_blossom_-_Google_Art_Project.jpg" alt="Bodom Gullari">
+                <div class="gallery-info">
+                    <h4>Bodom Gullari (1890)</h4>
+                    <p>Van Gog Muzeyi, Amsterdam</p>
+                </div>
+            </div>
+            <!-- Kartina 6 -->
+            <div class="gallery-card" data-category="nature" data-title="Qarg'alar Uchayotgan Bug'doyzor" data-year="1890" data-museum="Van Gog Muzeyi, Amsterdam" data-desc="Rassomning so'nggi ijod namunalaridan biri bo'lib, dramatik osmon va sirli kayfiyatni aks ettiradi." data-img="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Vincent_Willem_van_Gogh_-_Wheat_Field_with_Crows_-_Google_Art_Project.jpg/800px-Vincent_Willem_van_Gogh_-_Wheat_Field_with_Crows_-_Google_Art_Project.jpg">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Vincent_Willem_van_Gogh_-_Wheat_Field_with_Crows_-_Google_Art_Project.jpg/640px-Vincent_Willem_van_Gogh_-_Wheat_Field_with_Crows_-_Google_Art_Project.jpg" alt="Bug'doyzor">
+                <div class="gallery-info">
+                    <h4>Qarg'alar Uchayotgan Bug'doyzor (1890)</h4>
+                    <p>Van Gog Muzeyi, Amsterdam</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interaktiv Chizish Studiyasi -->
+    <section id="studio">
+        <h2 class="section-title">Yulduzli Tun Studiyasi</h2>
+        <div class="studio-container">
+            <p>Van Gog uslubida cho'tka bilan osmonga yulduz va bo'yoq izlarini chizing:</p>
+            <canvas id="paintCanvas" width="750" height="400"></canvas>
+            <div class="studio-tools">
+                <div class="color-picker">
+                    <div class="color-dot active" style="background: #f4c430;" data-color="#f4c430"></div>
+                    <div class="color-dot" style="background: #3b82f6;" data-color="#3b82f6"></div>
+                    <div class="color-dot" style="background: #ffffff;" data-color="#ffffff"></div>
+                    <div class="color-dot" style="background: #1e3a8a;" data-color="#1e3a8a"></div>
+                </div>
+                <button class="filter-btn" id="clearCanvas">Tozalash</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal Oyna -->
+    <div class="modal" id="artModal">
+        <div class="modal-content">
+            <button class="close-modal">&times;</button>
+            <div class="modal-img-container">
+                <img id="modalImg" src="" alt="">
+            </div>
+            <div class="modal-text">
+                <h3 id="modalTitle"></h3>
+                <div class="meta" id="modalMeta"></div>
+                <p id="modalDesc"></p>
+                <a href="#gallery" class="btn" id="closeModalBtn" style="padding: 10px 20px; text-align: center;">Yopish</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>"San'at insoniyatni qayg'ulardan tozalaydi." — Vinsent van Gog</p>
+        <p>&copy; 2026 Vinsent van Gog Veb-Sayti. Barcha huquqlar himoyalangan.</p>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // 1. Jonli Starry Night Fon Animatsiyasi
+        const canvas = document.getElementById('starryCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        let stars = [];
+        for (let i = 0; i < 150; i++) {
+            stars.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                radius: Math.random() * 2.2 + 0.5,
+                angle: Math.random() * Math.PI * 2,
+                speed: Math.random() * 0.02 + 0.01,
+                brightness: Math.random()
+            });
+        }
+
+        let time = 0;
+        function drawStarryBackground() {
+            ctx.fillStyle = 'rgba(10, 17, 40, 0.25)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            time += 0.005;
+
+            // To'lqinsimon osmon oqimlari
+            ctx.lineWidth = 2.5;
+            for (let i = 0; i < 6; i++) {
+                ctx.beginPath();
+                ctx.strokeStyle = i % 2 === 0 ? 'rgba(59, 130, 246, 0.12)' : 'rgba(244, 196, 48, 0.08)';
+                let startY = (canvas.height / 6) * i;
+                for (let x = 0; x < canvas.width; x += 30) {
+                    let y = startY + Math.sin(x * 0.003 + time + i) * 60 + Math.cos(time * 2 + x * 0.002) * 25;
+                    if (x === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.stroke();
+            }
+
+            // Yulduzlar
+            stars.forEach(star => {
+                star.brightness += 0.03;
+                let alpha = (Math.sin(star.brightness) + 1) / 2 * 0.7 + 0.3;
+
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 223, 0, ${alpha})`;
+                ctx.shadowBlur = 12;
+                ctx.shadowColor = '#f4c430';
+                ctx.fill();
+                ctx.restore();
+            });
+
+            requestAnimationFrame(drawStarryBackground);
+        }
+        drawStarryBackground();
+
+        // 2. Galereya Filtrlar va Modal Oyna
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const cards = document.querySelectorAll('.gallery-card');
+        const modal = document.getElementById('artModal');
+        const modalImg = document.getElementById('modalImg');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalMeta = document.getElementById('modalMeta');
+        const modalDesc = document.getElementById('modalDesc');
+        const closeModal = document.querySelector('.close-modal');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const filter = btn.getAttribute('data-filter');
+
+                cards.forEach(card => {
+                    if (filter === 'all' || card.getAttribute('data-category') === filter) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        cards.forEach(card => {
+            card.addEventListener('click', () => {
+                modalImg.src = card.getAttribute('data-img');
+                modalTitle.textContent = card.getAttribute('data-title');
+                modalMeta.textContent = `${card.getAttribute('data-year')} | ${card.getAttribute('data-museum')}`;
+                modalDesc.textContent = card.getAttribute('data-desc');
+                modal.style.display = 'flex';
+            });
+        });
+
+        [closeModal, closeModalBtn, modal].forEach(el => {
+            el.addEventListener('click', (e) => {
+                if (e.target === modal || e.target === closeModal || e.target === closeModalBtn) {
+                    modal.style.display = 'none';
+                }
+            });
+        });
+
+        // 3. Interaktiv Chizish Studiyasi
+        const paintCanvas = document.getElementById('paintCanvas');
+        const pCtx = paintCanvas.getContext('2d');
+        let painting = false;
+        let currentColor = '#f4c430';
+
+        pCtx.fillStyle = '#050b1a';
+        pCtx.fillRect(0, 0, paintCanvas.width, paintCanvas.height);
+
+        paintCanvas.addEventListener('mousedown', () => painting = true);
+        paintCanvas.addEventListener('mouseup', () => { painting = false; pCtx.beginPath(); });
+        paintCanvas.addEventListener('mousemove', drawOnCanvas);
+
+        function drawOnCanvas(e) {
+            if (!painting) return;
+            const rect = paintCanvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            pCtx.lineWidth = 6;
+            pCtx.lineCap = 'round';
+            pCtx.strokeStyle = currentColor;
+
+            pCtx.lineTo(x, y);
+            pCtx.stroke();
+            pCtx.beginPath();
+            pCtx.moveTo(x, y);
+        }
+
+        document.querySelectorAll('.color-dot').forEach(dot => {
+            dot.addEventListener('click', () => {
+                document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
+                dot.classList.add('active');
+                currentColor = dot.getAttribute('data-color');
+            });
+        });
+
+        document.getElementById('clearCanvas').addEventListener('click', () => {
+            pCtx.fillStyle = '#050b1a';
+            pCtx.fillRect(0, 0, paintCanvas.width, paintCanvas.height);
+        });
+    </script>
 </body>
 </html>
